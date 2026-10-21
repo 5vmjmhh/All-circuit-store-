@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sujit Kumar - Circuit Store & Technical Showcase</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-slate-900 border-b border-cyan-500/30 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-xl font-bold shadow-lg shadow-cyan-500/20">
+                    <i class="fa-solid fa-microchip text-slate-950"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Sujit Kumar</h1>
+                    <p class="text-xs text-slate-400 tracking-wider">CIRCUIT STORE & TECHNICAL SHOWCASE</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="openMainQRModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i> Website QR Code
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+        <!-- Search & Filter Controls -->
+        <div class="mb-8 flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+            <div class="relative w-full md:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="searchInput" onkeyup="filterCircuits()" placeholder="Search circuits or components..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+            </div>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto" id="filterContainer">
+                <button onclick="setFilter('all')" class="filter-btn active px-3 py-1.5 text-xs rounded-lg font-medium border border-cyan-500 bg-cyan-500/20 text-cyan-300">All</button>
+                <button onclick="setFilter('Microcontroller')" class="filter-btn px-3 py-1.5 text-xs rounded-lg font-medium border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700">Microcontroller / IC</button>
+                <button onclick="setFilter('Relay')" class="filter-btn px-3 py-1.5 text-xs rounded-lg font-medium border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700">Relay</button>
+                <button onclick="setFilter('Hardware')" class="filter-btn px-3 py-1.5 text-xs rounded-lg font-medium border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700">Hardware / DC</button>
+            </div>
+        </div>
+
+        <!-- Circuit Cards Grid -->
+        <div id="circuitsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Insertion via JS -->
+        </div>
+    </main>
+
+    <!-- Buy / Inquiry Modal -->
+    <div id="buyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
+            <button onclick="closeBuyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-100 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-slate-100 mb-1" id="modalCircuitTitle">Inquire Circuit</h3>
+            <p class="text-xs text-slate-400 mb-4">Send a direct buy inquiry message to Sujit Kumar</p>
+
+            <form id="inquiryForm" onsubmit="sendInquiry(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Your Name</label>
+                    <input type="text" id="buyerName" required placeholder="Enter your full name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Phone / WhatsApp Number</label>
+                    <input type="tel" id="buyerPhone" required placeholder="e.g. 9876543210" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Quantity</label>
+                    <input type="number" id="buyQuantity" min="1" value="1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Custom Requirements / Notes</label>
+                    <textarea id="buyerNote" rows="3" placeholder="Any specific requirements or queries?" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold rounded-lg hover:opacity-90 transition flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Send Order Inquiry via WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- QR Code Display Modal -->
+    <div id="qrModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 max-w-sm w-full text-center relative">
+            <button onclick="closeQRModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-100 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-slate-100 mb-1" id="qrTitle">QR Code</h3>
+            <p class="text-xs text-slate-400 mb-4" id="qrSubtitle">Scan to view details or share</p>
+            
+            <div class="p-4 bg-white rounded-xl inline-block mb-4 shadow-inner">
+                <div id="qrcodeCanvas"></div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="copyQRLink()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">
+                    <i class="fa-solid fa-copy mr-1"></i> Copy Link
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 Sujit Kumar. All rights reserved. Built for technical circuit inquiries & orders.</p>
+    </footer>
+
+    <!-- App Logic JavaScript -->
+    <script>
+        // Data derived directly from the user provided table photo
+        const circuitsData = [
+            {
+                id: 1,
+                name: "1. L293D Bidirectional Motor Control",
+                category: "Microcontroller",
+                tag: "Microcontroller / IC",
+                components: [
+                    "Arduino Uno R3",
+                    "L293D Motor Driver IC",
+                    "DC Motor",
+                    "SPDT Slide Switch",
+                    "9V External Battery"
+                ],
+                summary: [
+                    "L293D: Pin 1,16 → 5V | Pin 8 → 9V(+) | Pin 4,5,12,13 → GND",
+                    "Inputs/Outputs: Pin 2 → D3, Pin 7 → D4, Pin 3 → Motor M1, Pin 6 → Motor M2",
+                    "Slide Switch: Left → 5V, Middle → D2, Right → GND",
+                    "Power: Battery (-) → Common GND"
+                ]
+            },
+            {
+                id: 2,
+                name: "2. DPDT Relay Reverse Circuit",
+                category: "Relay",
+                tag: "Relay Switching",
+                components: [
+                    "Arduino Uno R3",
+                    "KS2E-M-DC5 DPDT Relay",
+                    "DC Motor",
+                    "Slide Switch",
+                    "9V Battery"
+                ],
+                summary: [
+                    "Relay Coil: Top Pin → D8, Bottom Pin → GND",
+                    "Relay Switch (H-Bridge): COM → Motor Terminals",
+                    "NC1 & NO2 → 9V(+)",
+                    "NO1 & NC2 → 9V(-)",
+                    "Switch: Pin 2 → Arduino Input Signal"
+                ]
+            },
+            {
+                id: 3,
+                name: "3. Pure Hardware DPDT Reverse Circuit",
+                category: "Hardware",
+                tag: "No Code / No IC",
+                components: [
+                    "DPDT Slide Switch (6 Pin)",
+                    "DC Motor",
+                    "9V Battery",
+                    "Connecting Wires"
+                ],
+                summary: [
+                    "Battery: (+) → Pin 3 (Top-Middle), (-) → Pin 5 (Top-Right)",
+                    "Motor: Term 1 → Pin 4 (Bottom-Middle), Term 2 → Pin 6 (Bottom-Right)",
+                    "Cross Wires: Pin 1 to Pin 6, Pin 2 to Pin 5"
+                ]
+            },
+            {
+                id: 4,
+                name: "4. Basic Single Direction On/Off",
+                category: "Hardware",
+                tag: "Direct DC Switch",
+                components: [
+                    "SPST Slide Switch",
+                    "DC Motor",
+                    "9V Battery"
+                ],
+                summary: [
+                    "9V(+) → Switch Input Terminal",
+                    "Switch Output Terminal → Motor Terminal 1",
+                    "9V(-) → Motor Terminal 2"
+                ]
+            },
+            {
+                id: 5,
+                name: "5. NPN Transistor Switch Circuit",
+                category: "Hardware",
+                tag: "BJT Switching",
+                components: [
+                    "Arduino Uno R3",
+                    "NPN Transistor (BC547/2N2222)",
+                    "1kΩ Resistor",
+                    "1N4007 Diode",
+                    "DC Motor & 9V Power"
+                ],
+                summary: [
+                    "Base (B): D9 via 1kΩ Resistor",
+                    "Collector (C): Motor (-) Terminal",
+                    "Emitter (E): Common GND",
+                    "Motor (+): 9V External Supply (+)",
+                    "Diode: Across motor terminals (reverse biased)"
+                ]
+            },
+            {
+                id: 6,
+                name: "6. Servo Motor Control Circuit",
+                category: "Microcontroller",
+                tag: "PWM Angle Control",
+                components: [
+                    "Arduino Uno R3",
+                    "Servo Motor (SG90)"
+                ],
+                summary: [
+                    "Signal Wire (Yellow/Orange): Arduino Pin D9 (PWM)",
+                    "VCC Wire (Red): Arduino 5V",
+                    "GND Wire (Brown/Black): Arduino GND"
+                ]
+            },
+            {
+                id: 7,
+                name: "7. LED Blink & Output Circuit",
+                category: "Microcontroller",
+                tag: "Basic Output",
+                components: [
+                    "Arduino Uno R3",
+                    "LED",
+                    "220Ω Resistor"
+                ],
+                summary: [
+                    "Anode (+): Digital Pin D13 via 220Ω Resistor",
+                    "Cathode (-): Arduino GND"
+                ]
+            }
+        ];
+
+        let selectedFilter = 'all';
+        let currentCircuitForInquiry = null;
+        let qrCodeInstance = null;
+        let activeQRUrl = "";
+
+        // Render Cards
+        function renderCircuits() {
+            const grid = document.getElementById('circuitsGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = circuitsData.filter(item => {
+                const matchesFilter = selectedFilter === 'all' || item.category === selectedFilter;
+                const matchesSearch = item.name.toLowerCase().includes(searchVal) || 
+                                      item.components.some(c => c.toLowerCase().includes(searchVal)) ||
+                                      item.tag.toLowerCase().includes(searchVal);
+                return matchesFilter && matchesSearch;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">No circuits found matching your query.</div>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-800 hover:border-cyan-500/40 rounded-xl p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/5 group";
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-full">${c.tag}</span>
+                            <button onclick="openSingleQR(${c.id})" title="Generate QR Code" class="text-slate-500 hover:text-cyan-400 transition text-sm">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </button>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-100 group-hover:text-cyan-400 transition-colors mb-4">${c.name}</h2>
+                        
+                        <!-- Key Components -->
+                        <div class="mb-4">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-layer-group text-cyan-500"></i> Key Components
+                            </h4>
+                            <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+                                ${c.components.map(comp => `<li>${comp}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <!-- Wiring Summary -->
+                        <div class="mb-6">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-plug text-cyan-500"></i> Wiring Summary
+                            </h4>
+                            <ul class="text-xs text-slate-300 space-y-1 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+                                ${c.summary.map(s => `<li class="border-b border-slate-800/50 pb-1 last:border-none">${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="openBuyModal(${c.id})" class="w-full py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500 hover:to-blue-600 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-shopping"></i> Buy / Inquiry Message
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filtering & Search
+        function setFilter(category) {
+            selectedFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn px-3 py-1.5 text-xs rounded-lg font-medium border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700";
+            });
+            event.target.className = "filter-btn active px-3 py-1.5 text-xs rounded-lg font-medium border border-cyan-500 bg-cyan-500/20 text-cyan-300";
+            renderCircuits();
+        }
+
+        function filterCircuits() {
+            renderCircuits();
+        }
+
+        // Modals Logic
+        function openBuyModal(circuitId) {
+            const circuit = circuitsData.find(c => c.id === circuitId);
+            currentCircuitForInquiry = circuit;
+            document.getElementById('modalCircuitTitle').innerText = circuit.name;
+            document.getElementById('buyModal').classList.remove('hidden');
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buyModal').classList.add('hidden');
+        }
+
+        function sendInquiry(e) {
+            e.preventDefault();
+            const name = document.getElementById('buyerName').value;
+            const phone = document.getElementById('buyerPhone').value;
+            const qty = document.getElementById('buyQuantity').value;
+            const note = document.getElementById('buyerNote').value;
+
+            const text = `Hello Sujit Kumar,%0A%0AI want to inquire about buying/building the following circuit:%0A*Circuit:* ${currentCircuitForInquiry.name}%0A*Quantity:* ${qty}%0A*Buyer Name:* ${name}%0A*Phone:* ${phone}%0A*Notes:* ${note}`;
+            
+            // Redirect to WhatsApp
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+            closeBuyModal();
+        }
+
+        // QR Code Modal
+        function generateQRCode(url) {
+            const container = document.getElementById('qrcodeCanvas');
+            container.innerHTML = '';
+            qrCodeInstance = new QRCode(container, {
+                text: url,
+                width: 180,
+                height: 180,
+                colorDark: "#020617",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            activeQRUrl = url;
+        }
+
+        function openMainQRModal() {
+            document.getElementById('qrTitle').innerText = "Sujit Kumar Circuit Store";
+            document.getElementById('qrSubtitle').innerText = "Scan to visit full website";
+            document.getElementById('qrModal').classList.remove('hidden');
+            generateQRCode(window.location.href);
+        }
+
+        function openSingleQR(circuitId) {
+            const circuit = circuitsData.find(c => c.id === circuitId);
+            document.getElementById('qrTitle').innerText = circuit.name;
+            document.getElementById('qrSubtitle').innerText = "Scan to view circuit details & components";
+            document.getElementById('qrModal').classList.remove('hidden');
+            
+            const circuitUrl = `${window.location.origin}${window.location.pathname}?circuit=${circuit.id}`;
+            generateQRCode(circuitUrl);
+        }
+
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.add('hidden');
+        }
+
+        function copyQRLink() {
+            navigator.clipboard.writeText(activeQRUrl);
+            alert("Link copied to clipboard!");
+        }
+
+        // Initialize on Load
+        renderCircuits();
+    </script>
+</body>
+</html>
